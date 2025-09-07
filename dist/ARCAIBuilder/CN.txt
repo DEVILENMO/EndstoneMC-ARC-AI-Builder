@@ -6,14 +6,14 @@ NO_PERMISSION=你没有权限使用此命令
 UNKNOWN_REASON=未知原因
 
 # 主界面
-AI_BUILDER_MAIN_TITLE=🏗️ AI建筑师
+AI_BUILDER_MAIN_TITLE=AI建筑师
 AI_BUILDER_MAIN_CONTENT=当前位置: ({x}, {y}, {z})\n维度: {dimension}\n\n请选择操作：
-AI_BUILDER_START_BUILD=🏠 开始建造
-AI_BUILDER_HISTORY=📋 建造历史
-AI_BUILDER_CLOSE=❌ 关闭
+AI_BUILDER_START_BUILD=开始建造
+AI_BUILDER_HISTORY=建造历史
+AI_BUILDER_CLOSE=关闭
 
 # 建造输入
-BUILD_INPUT_TITLE=🏗️ 开始建造
+BUILD_INPUT_TITLE=开始建造
 BUILD_INPUT_SIZE_LABEL=建筑范围 (最大64)
 BUILD_INPUT_SIZE_PLACEHOLDER=输入建筑范围，如: 10
 BUILD_INPUT_REQUIREMENTS_LABEL=建筑需求描述
@@ -26,25 +26,25 @@ BUILD_GENERATION_FAILED=AI生成建筑指令失败：{error}
 BUILD_EXECUTION_ERROR=执行建筑指令时出错！
 
 # 确认面板
-BUILD_CONFIRM_TITLE=🏗️ 确认建造
-BUILD_CONFIRM_CONTENT=🏗️ 建筑方案确认\n\n💰 预估成本: {cost:,} 元\n💳 你的余额: {balance:,} 元\n📋 指令数量: {count} 条\n\n{status}\n\n📝 建筑指令预览（前5条）：\n{commands}
-BUILD_CONFIRM_INSUFFICIENT_FUNDS=❌ 余额不足！无法建造此建筑。
-BUILD_CONFIRM_SUFFICIENT_FUNDS=✅ 余额充足，可以开始建造！
-BUILD_CONFIRM_ACCEPT=✅ 确认建造
-BUILD_CONFIRM_CANCEL=❌ 取消
+BUILD_CONFIRM_TITLE=确认建造
+BUILD_CONFIRM_CONTENT=建筑方案确认\n\n预估成本: {cost:,} 元\n你的余额: {balance:,} 元\n指令数量: {count} 条\n\n{status}\n\n建筑指令预览（前5条）：\n{commands}
+BUILD_CONFIRM_INSUFFICIENT_FUNDS=余额不足！无法建造此建筑。
+BUILD_CONFIRM_SUFFICIENT_FUNDS=余额充足，可以开始建造！
+BUILD_CONFIRM_ACCEPT=确认建造
+BUILD_CONFIRM_CANCEL=取消
 
 # 建造状态
-BUILDING_LOADING_TITLE=🤖 AI正在思考...
+BUILDING_LOADING_TITLE=AI正在思考...
 BUILDING_LOADING_CONTENT=AI建筑师正在分析你的需求并生成建筑指令，请稍候...
-BUILDING_STARTED=✅ 建造已开始！预计成本：{cost:,} 元
-BUILDING_PROGRESS=🏗️ 建筑进度: {current}/{total} ({percent}%)
-BUILDING_COMPLETED=✅ 建筑建造完成！
-BUILDING_EXECUTING=🏗️ 建筑指令已开始执行，请耐心等待...
+BUILDING_STARTED=建造已开始！预计成本：{cost:,} 元
+BUILDING_PROGRESS=建筑进度: {current}/{total} ({percent}%)
+BUILDING_COMPLETED=建筑建造完成！
+BUILDING_EXECUTING=建筑指令已开始执行，请耐心等待...
 
 # 历史记录
-BUILD_HISTORY_TITLE=📋 建造历史
+BUILD_HISTORY_TITLE=建造历史
 BUILD_HISTORY_EMPTY=你还没有任何建造记录。
-BUILD_HISTORY_CONTENT=📋 你的建造历史：\n\n{records}
+BUILD_HISTORY_CONTENT=你的建造历史：\n\n{records}
 
 # 配置相关
 CONFIG_USAGE=用法: /aibuilderconfig <openai_key> [api_url]
