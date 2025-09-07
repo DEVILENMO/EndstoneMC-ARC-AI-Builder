@@ -1,0 +1,31 @@
+# ARC AI Builder 默认配置文件
+# 这个文件包含了所有可配置的设置项及其默认值
+
+# OpenAI API 配置
+openai_api_key=
+openai_api_url=https://api.deepseek.com
+
+# AI 模型配置
+ai_model=deepseek-chat
+
+# 经济系统价格配置
+economy_land_per_block=5000
+economy_diamond=15000
+economy_log=20
+economy_stone=10
+economy_potato=30
+
+# 建筑限制配置
+max_building_size=64
+min_building_size=1
+
+# API 连接配置
+api_timeout=60
+api_max_retries=3
+
+# 建造配置
+build_delay=0.25
+max_commands_per_build=1000
+
+# 语言配置
+default_language=CN

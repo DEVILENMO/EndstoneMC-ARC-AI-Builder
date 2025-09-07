@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "endstone_arc_ai_builder"
+version = "0.0.1"
+dependencies = ["requests>=2.25.0"]
+authors = [
+    { name = "DEVILENMO", email = "DEVILENMO@gmail.com" },
+]
+description = "AI Builder dlc for arc_core - AI-powered building system using OpenAI."
+readme = "README.md"
+license = { file = "LICENSE" }
+keywords = ["endstone", "plugin", "ai", "building", "openai"]
+
+[project.urls]
+Homepage = "https://github.com/EndstoneMC/python-example-plugin"
+
+[project.entry-points."endstone"]
+arc_ai_builder = "endstone_arc_ai_builder:ARCAIBuilderPlugin"
