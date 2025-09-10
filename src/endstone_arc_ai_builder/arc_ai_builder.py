@@ -107,6 +107,9 @@ class ARCAIBuilderPlugin(Plugin):
         # 加载OpenAI配置
         self._load_openai_config()
 
+        # 初始化领地管理
+        self.land_manager = self.server.plugin_manager.get_plugin('arc_core')
+
         self.logger.info(f"[ARC AI Builder] Plugin enabled!")
 
     def on_disable(self) -> None:
@@ -380,19 +383,19 @@ class ARCAIBuilderPlugin(Plugin):
             
             # 添加开始建造按钮
             main_panel.add_button(
-                "🏠 开始建造",
+                "开始建造",
                 on_click=lambda sender: self._show_build_input_panel(sender, center_pos, dimension)
             )
             
             # 添加待确认建筑设计按钮
             main_panel.add_button(
-                "📋 待确认建筑设计",
+                "待确认建筑设计",
                 on_click=lambda sender: self._show_rebuild_panel(sender)
             )
             
             # 添加关闭按钮
             main_panel.add_button(
-                "❌ 关闭",
+                "关闭",
                 on_click=lambda sender: None
             )
             
@@ -463,7 +466,7 @@ class ARCAIBuilderPlugin(Plugin):
                         self._safe_log('error', "[ARC AI Builder] Build submit - No form data found in args or kwargs")
                         self._safe_log('error', f"[ARC AI Builder] Build submit - Available kwargs: {list(kwargs.keys())}")
                         error_form = ActionForm(
-                            title="❌ 输入错误",
+                            title="输入错误",
                             content="无法获取表单数据，请重试。",
                             on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                         )
@@ -482,7 +485,7 @@ class ARCAIBuilderPlugin(Plugin):
                         except json.JSONDecodeError as je:
                             self._safe_log('error', f"[ARC AI Builder] Build submit - JSON decode error: {str(je)}")
                             error_form = ActionForm(
-                                title="❌ 输入错误",
+                                title="输入错误",
                                 content="输入数据格式错误，请重试。",
                                 on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                             )
@@ -496,7 +499,7 @@ class ARCAIBuilderPlugin(Plugin):
                         # 其他格式，尝试转换
                         self._safe_log('error', f"[ARC AI Builder] Build submit - Unexpected data format: {type(form_data)}")
                         error_form = ActionForm(
-                            title="❌ 输入错误",
+                            title="输入错误",
                             content="输入数据格式错误，请重试。",
                             on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                         )
@@ -507,7 +510,7 @@ class ARCAIBuilderPlugin(Plugin):
                     if not isinstance(data, (list, tuple)) or len(data) < 3:
                         self._safe_log('error', f"[ARC AI Builder] Build submit - Invalid data format: {data}")
                         error_form = ActionForm(
-                            title="❌ 输入错误",
+                            title="输入错误",
                             content="输入数据格式错误，请重试。",
                             on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                         )
@@ -526,7 +529,7 @@ class ARCAIBuilderPlugin(Plugin):
                     if size_str is None:
                         self._safe_log('error', "[ARC AI Builder] Build submit - size_str is None")
                         error_form = ActionForm(
-                            title="❌ 输入错误",
+                            title="输入错误",
                             content="建筑范围不能为空！",
                             on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                         )
@@ -537,7 +540,7 @@ class ARCAIBuilderPlugin(Plugin):
                     if requirements is None:
                         self._safe_log('error', "[ARC AI Builder] Build submit - requirements is None")
                         error_form = ActionForm(
-                            title="❌ 输入错误",
+                            title="输入错误",
                             content="建筑需求不能为空！",
                             on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                         )
@@ -573,7 +576,7 @@ class ARCAIBuilderPlugin(Plugin):
                         min_size = int(self.setting_manager.GetSetting("min_building_size") or "1")
                         max_size = int(self.setting_manager.GetSetting("max_building_size") or "64")
                         result_form = ActionForm(
-                            title="❌ 输入错误",
+                            title="输入错误",
                             content=f"建筑范围必须是{min_size}-{max_size}之间的数字！",
                             on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                         )
@@ -582,7 +585,7 @@ class ARCAIBuilderPlugin(Plugin):
                     except Exception as e:
                         self._safe_log('error', f"[ARC AI Builder] Build submit - Unexpected error in size validation: {str(e)}")
                         error_form = ActionForm(
-                            title="❌ 输入错误",
+                            title="输入错误",
                             content=f"处理建筑范围时出错：{str(e)}",
                             on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                         )
@@ -593,7 +596,7 @@ class ARCAIBuilderPlugin(Plugin):
                     if not isinstance(requirements, str):
                         self._safe_log('error', f"[ARC AI Builder] Build submit - requirements is not string: {type(requirements)}")
                         error_form = ActionForm(
-                            title="❌ 输入错误",
+                            title="输入错误",
                             content="建筑需求必须是文本！",
                             on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                         )
@@ -603,7 +606,7 @@ class ARCAIBuilderPlugin(Plugin):
                     if not requirements.strip():
                         self._safe_log('error', "[ARC AI Builder] Build submit - requirements is empty")
                         result_form = ActionForm(
-                            title="❌ 输入错误", 
+                            title="输入错误", 
                             content="请描述你的建筑需求！",
                             on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                         )
@@ -619,7 +622,7 @@ class ARCAIBuilderPlugin(Plugin):
                 except json.JSONDecodeError as je:
                     self._safe_log('error', f"[ARC AI Builder] Build submit - JSON decode error: {str(je)}")
                     error_form = ActionForm(
-                        title="❌ 输入错误",
+                        title="输入错误",
                         content="输入数据格式错误，请重试。",
                         on_close=lambda s: self._show_build_input_panel(s, center_pos, dimension)
                     )
@@ -630,14 +633,14 @@ class ARCAIBuilderPlugin(Plugin):
                     import traceback
                     self._safe_log('error', f"[ARC AI Builder] Build input submit traceback: {traceback.format_exc()}")
                     error_form = ActionForm(
-                        title="❌ 错误",
+                        title="错误",
                         content=f"处理输入时出错：{str(e)}\n请重试。",
                         on_close=lambda s: self._show_ai_builder_panel(s)
                     )
                     sender.send_form(error_form)
             
             build_input_panel = ModalForm(
-                title="🏗️ 开始建造",
+                title="开始建造",
                 controls=[
                     Label(text=f"中心位置: ({center_pos[0]}, {center_pos[1]}, {center_pos[2]})"),
                     size_input,
@@ -667,7 +670,7 @@ class ARCAIBuilderPlugin(Plugin):
             if size is None:
                 self._safe_log('error', "[ARC AI Builder] Start building generation - size is None")
                 error_form = ActionForm(
-                    title="❌ 错误",
+                    title="错误",
                     content="建筑范围参数错误！",
                     on_close=lambda sender: self._show_ai_builder_panel(sender)
                 )
@@ -677,12 +680,56 @@ class ARCAIBuilderPlugin(Plugin):
             if requirements is None:
                 self._safe_log('error', "[ARC AI Builder] Start building generation - requirements is None")
                 error_form = ActionForm(
-                    title="❌ 错误",
+                    title="错误",
                     content="建筑需求参数错误！",
                     on_close=lambda sender: self._show_ai_builder_panel(sender)
                 )
                 player.send_form(error_form)
                 return
+
+            # 检查是否处于别人的领地区域
+            if self.land_manager is not None:
+                try:
+                    import math
+                    # 获取玩家XUID（若不可用则为None）
+                    online_player = self.server.get_player(player.name)
+                    player_xuid = getattr(online_player, 'xuid', None) if online_player is not None else None
+                    # 计算方形范围（包含边界）：[cx-size, cx+size] × [cz-size, cz+size]
+                    cx, cy, cz = center_pos
+                    min_x = math.floor(cx - size)
+                    max_x = math.floor(cx + size)
+                    min_z = math.floor(cz - size)
+                    max_z = math.floor(cz + size)
+                    forbidden_land = None
+                    unique_land_ids = set()
+                    # 第一次遍历：仅收集范围内命中的领地ID
+                    for x in range(min_x, max_x + 1):
+                        for z in range(min_z, max_z + 1):
+                            land_id = self.land_manager.api_if_position_in_land(dimension, (x, cy, z))
+                            if land_id:
+                                unique_land_ids.add(land_id)
+                    # 第二次遍历：对唯一领地ID做一次信息查询与权限判断
+                    for land_id in unique_land_ids:
+                        land_info = self.land_manager.api_get_land_info(land_id) or {}
+                        if not land_info:
+                            continue
+                        if str(land_info.get('dimension')) != str(dimension):
+                            continue
+                        owner_xuid = land_info.get('owner_xuid')
+                        shared_users = land_info.get('shared_users') or []
+                        if player_xuid is None or (player_xuid != owner_xuid and player_xuid not in shared_users):
+                            forbidden_land = land_info
+                            break
+                    if forbidden_land is not None:
+                        land_name = forbidden_land.get('land_name') or '未知领地'
+                        player.send_message(f"该建造范围包含他人领地: {land_name}，已阻止建造。")
+                        player.send_message("如需在该区域建造，请联系领地主人或被设为共享成员。")
+                        return
+                except Exception as land_e:
+                    self._safe_log('error', f"[ARC AI Builder] Land check error: {str(land_e)}")
+                    # 领地检查失败时，出于安全起见阻止建造，避免误伤
+                    player.send_message("领地系统检查失败，已阻止建造以避免破坏他人领地。")
+                    return
             
             # 生成请求ID并记录位置
             request_id = self.next_request_id
@@ -700,7 +747,7 @@ class ARCAIBuilderPlugin(Plugin):
             self._safe_log('info', f"[ARC AI Builder] Recorded request {request_id} with position: {center_pos}")
             
             # 发送生成中提示消息
-            player.send_message("🤖 AI建筑师正在分析你的需求并生成建筑指令，请稍候...")
+            player.send_message("AI建筑师正在分析你的需求并生成建筑指令，请稍候...")
             
             # 在子线程中调用OpenAI API
             def generate_in_thread():
@@ -730,13 +777,13 @@ class ARCAIBuilderPlugin(Plugin):
                                 
                                 self._safe_log('info', f"[ARC AI Builder] Update UI - Showing confirm panel for {player.name}")
                                 # 发送成功消息
-                                player.send_message("✅ AI建筑师已完成建筑方案设计！")
+                                player.send_message("AI建筑师已完成建筑方案设计！")
                                 # 显示确认面板，传递请求ID
                                 self._show_build_confirm_panel(player, commands, estimated_cost, request_id=request_id)
                             else:
                                 self._safe_log('info', f"[ARC AI Builder] Update UI - Showing error message for {player.name}")
                                 # 发送错误消息
-                                player.send_message(f"❌ AI生成建筑指令失败：{error_msg}")
+                                player.send_message(f"AI生成建筑指令失败：{error_msg}")
                                 player.send_message("请重新尝试或联系管理员。")
                         except Exception as ui_e:
                             self._safe_log('error', f"[ARC AI Builder] UI update error: {str(ui_e)}")
@@ -757,7 +804,7 @@ class ARCAIBuilderPlugin(Plugin):
                     def show_error():
                         try:
                             self._safe_log('info', f"[ARC AI Builder] Show error - Showing error message for {player.name}")
-                            player.send_message(f"❌ 生成建筑指令时发生错误：{str(e)}")
+                            player.send_message(f"生成建筑指令时发生错误：{str(e)}")
                             player.send_message("请重新尝试或联系管理员。")
                         except Exception as ui_e:
                             self._safe_log('error', f"[ARC AI Builder] Error UI update error: {str(ui_e)}")
@@ -784,16 +831,16 @@ class ARCAIBuilderPlugin(Plugin):
             player_money = self._get_player_money(player.name)
             
             # 构建确认内容
-            content = f"🏗️ 建筑方案确认\n\n"
-            content += f"💰 预估成本: {estimated_cost:,} 元\n"
-            content += f"💳 你的余额: {player_money:,} 元\n"
-            content += f"📋 指令数量: {len(commands)} 条\n\n"
+            content = f"建筑方案确认\n\n"
+            content += f"预估成本: {estimated_cost:,} 元\n"
+            content += f"你的余额: {player_money:,} 元\n"
+            content += f"指令数量: {len(commands)} 条\n\n"
             
             if player_money < estimated_cost:
-                content += "❌ 余额不足！无法建造此建筑。"
+                content += "余额不足！无法建造此建筑。"
             else:
-                content += "✅ 余额充足，可以开始建造！\n\n"
-                content += "📝 建筑指令预览（前5条）：\n"
+                content += "余额充足，可以开始建造！\n\n"
+                content += "建筑指令预览（前5条）：\n"
                 for i, cmd in enumerate(commands[:5]):
                     content += f"{i+1}. {cmd}\n"
                 if len(commands) > 5:
@@ -801,7 +848,7 @@ class ARCAIBuilderPlugin(Plugin):
             
             # 创建确认面板
             confirm_panel = ActionForm(
-                title="🏗️ 确认建造",
+                title="确认建造",
                 content=content
             )
             
@@ -810,25 +857,25 @@ class ARCAIBuilderPlugin(Plugin):
                 if record:
                     # 从记录确认的情况
                     confirm_panel.add_button(
-                        "✅ 确认建造",
+                        "确认建造",
                         on_click=lambda sender: self._confirm_building_with_record(sender, commands, estimated_cost, record)
                     )
                 else:
                     # 正常确认的情况
                     confirm_panel.add_button(
-                        "✅ 确认建造",
+                        "确认建造",
                         on_click=lambda sender: self._confirm_building(sender, commands, estimated_cost, request_id=request_id)
                     )
             
             # 添加取消按钮
             if record:
                 confirm_panel.add_button(
-                    "❌ 取消",
+                    "取消",
                     on_click=lambda sender: self._show_rebuild_panel(sender)
                 )
             else:
                 confirm_panel.add_button(
-                    "❌ 取消",
+                    "取消",
                     on_click=lambda sender: self._show_ai_builder_panel(sender)
                 )
             
@@ -897,11 +944,11 @@ class ARCAIBuilderPlugin(Plugin):
                     del self.request_positions[request_id]
                     
                     # 显示开始建造消息
-                    player.send_message(f"✅ 建造已开始！预计成本：{estimated_cost:,} 元")
-                    player.send_message(f"📍 建筑位置：({center_pos[0]}, {center_pos[1]}, {center_pos[2]})")
+                    player.send_message(f"建造已开始！预计成本：{estimated_cost:,} 元")
+                    player.send_message(f"建筑位置：({center_pos[0]}, {center_pos[1]}, {center_pos[2]})")
                     return
                 else:
-                    player.send_message("❌ 建筑位置信息丢失，无法建造！")
+                    player.send_message("建筑位置信息丢失，无法建造！")
                     return
             
             # 从缓存中获取请求的情况
@@ -938,7 +985,7 @@ class ARCAIBuilderPlugin(Plugin):
             del self.player_requests[player.name]
             
             # 显示开始建造消息
-            player.send_message(f"✅ 建造已开始！预计成本：{estimated_cost:,} 元")
+            player.send_message(f"建造已开始！预计成本：{estimated_cost:,} 元")
             
         except Exception as e:
             self._safe_log('error', f"[ARC AI Builder] Confirm building error: {str(e)}")
@@ -1146,11 +1193,11 @@ class ARCAIBuilderPlugin(Plugin):
                     self._safe_log('info', f"[ARC AI Builder] Execute building commands with record - using memory position: {center_pos}")
                 else:
                     self._safe_log('error', f"[ARC AI Builder] Execute building commands with record - building record missing coordinates")
-                    player.send_message("❌ 建筑位置信息缺失，无法执行建筑指令！")
+                    player.send_message("建筑位置信息缺失，无法执行建筑指令！")
                     return
             else:
                 self._safe_log('error', f"[ARC AI Builder] Execute building commands with record - no building position found")
-                player.send_message("❌ 建筑位置信息缺失，无法执行建筑指令！")
+                player.send_message("建筑位置信息缺失，无法执行建筑指令！")
                 return
             
             # 使用命令执行器异步执行指令
@@ -1160,7 +1207,7 @@ class ARCAIBuilderPlugin(Plugin):
             self._update_building_status(building_id, 'building')
             
             # 显示进度提示
-            player.send_message("🏗️ 建筑指令已开始执行，请耐心等待...")
+            player.send_message("建筑指令已开始执行，请耐心等待...")
             
         except Exception as e:
             self._safe_log('error', f"[ARC AI Builder] Execute building commands with record error: {str(e)}")
@@ -1206,11 +1253,11 @@ class ARCAIBuilderPlugin(Plugin):
                     self._safe_log('info', f"[ARC AI Builder] Execute building commands - using memory position: {center_pos}")
                 else:
                     self._safe_log('error', f"[ARC AI Builder] Execute building commands - building record missing coordinates")
-                    player.send_message("❌ 建筑位置信息缺失，无法执行建筑指令！")
+                    player.send_message("建筑位置信息缺失，无法执行建筑指令！")
                     return
             else:
                 self._safe_log('error', f"[ARC AI Builder] Execute building commands - building record not found in memory")
-                player.send_message("❌ 建筑记录不存在，无法执行建筑指令！")
+                player.send_message("建筑记录不存在，无法执行建筑指令！")
                 return
             
             # 使用命令执行器异步执行指令
@@ -1220,7 +1267,7 @@ class ARCAIBuilderPlugin(Plugin):
             self._update_building_status(building_id, 'building')
             
             # 显示进度提示
-            player.send_message("🏗️ 建筑指令已开始执行，请耐心等待...")
+            player.send_message("建筑指令已开始执行，请耐心等待...")
             
         except Exception as e:
             self._safe_log('error', f"[ARC AI Builder] Execute building commands error: {str(e)}")
@@ -1294,7 +1341,7 @@ class ARCAIBuilderPlugin(Plugin):
             # 可以在这里添加进度通知给玩家
             online_player = self.server.get_player(player_name)
             if online_player:
-                online_player.send_message(f"🏗️ 建筑进度: {current}/{total} ({progress_percent}%)")
+                online_player.send_message(f"建筑进度: {current}/{total} ({progress_percent}%)")
                 
         except Exception as e:
             self._safe_log('error', f"[ARC AI Builder] Build progress callback error: {str(e)}")
@@ -1330,7 +1377,7 @@ class ARCAIBuilderPlugin(Plugin):
             # 通知玩家
             online_player = self.server.get_player(player_name)
             if online_player:
-                online_player.send_message("✅ 建筑建造完成！")
+                online_player.send_message("建筑建造完成！")
             else:
                 self._safe_log('warning', f"[ARC AI Builder] Build complete - Player {player_name} is not online")
                 

@@ -1,5 +1,5 @@
-# ARC AI Builder 默认配置文件
-# 这个文件包含了所有可配置的设置项及其默认值
+# 语言配置
+default_language=CN
 
 # OpenAI API 配置
 openai_api_key=
@@ -26,6 +26,3 @@ api_max_retries=3
 # 建造配置
 build_delay=0.25
 max_commands_per_build=1000
-
-# 语言配置
-default_language=CN
